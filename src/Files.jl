@@ -30,14 +30,22 @@ MyTrainingMarketDataSet() = _jld2(joinpath(_PATH_TO_DATA, "SP500-Daily-OHLC-1-3-
 Load the ticker-picker bandit model results computed in the `Setup-L14a-Example-RiskAware-BBBP-Ticker-Picker-Fall-2025.ipynb` notebook.
 """
 function MyTickerPickerBanditModelResults(;mood::Symbol = :neutral)::Dict{String, Any}
-    if (mood == :optimistic) 
-        return _jld2(joinpath(_PATH_TO_DATA, "Ticker-Picker-Preferences-Optimistic-Fall-2025.jld2"));
+    # map moods to the expected file names
+    filename = if (mood == :optimistic)
+        "Ticker-Picker-Preferences-Optimistic-Fall-2025.jld2"
     elseif (mood == :pessimistic)
-        return _jld2(joinpath(_PATH_TO_DATA, "Ticker-Picker-Preferences-Pessimistic-Fall-2025.jld2"));
+        "Ticker-Picker-Preferences-Pessimistic-Fall-2025.jld2"
     elseif (mood == :neutral)
-        return _jld2(joinpath(_PATH_TO_DATA, "Ticker-Picker-Preferences-Neutral-Fall-2025.jld2"));
+        "Ticker-Picker-Preferences-Neutral-Fall-2025.jld2"
     else
-        error("Invalid mood specified: $mood. Valid options are :optimistic, :neutral, :pessimistic.");
+        error("Invalid mood specified: $mood. Valid options are :optimistic, :neutral, :pessimistic.")
     end
+
+    path = joinpath(_PATH_TO_DATA, filename)
+    if !isfile(path)
+        error("Ticker-picker preference file not found: $path.\nPlease generate or place the expected JLD2 file in the data directory.\nYou can create these files by running the Setup notebook 'Setup-L14a-Example-RiskAware-BBBP-Ticker-Picker-Fall-2025.ipynb' or by exporting the results to the given filenames.")
+    end
+
+    return _jld2(path)
 end
 # -- PUBLIC FUNCTIONS ABOVE HERE ------------------------------------------------------------------------------ #
